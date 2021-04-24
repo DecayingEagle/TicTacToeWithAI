@@ -1,17 +1,20 @@
 #include <iostream>
 #include <sstream>
+#include <stdlib.h> 
+#include <time.h>
 
 using namespace std;
 
-bool xStarts, endGame, checking;
+bool xStarts, endGame, checking, playerWon;
 string g_input;
-char player1OX, player2OX, player1win, player2win, debugYN;
-int playerWon = 0;
+char player1, player2, player1win, player2win, debugYN, validIn;
+int currentPlayer, convertInt;
 
 char tile[9] = {' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '};
 
 bool randomBool()
 {
+    srand(time(NULL));
     return 0 + (rand() % (1 - 0 + 1)) == 1;
 }
 
@@ -29,41 +32,33 @@ void gameInit() {
     cin >> g_input ;
 
     if (g_input == "X" || g_input == "x") {
-        player1OX = 'X';
-        player2OX = 'O';
+        player1 = 'X';
+        player2 = 'O';
     } else {
-        player1OX = 'O';
-        player2OX = 'X';
+        player1 = 'O';
+        player2 = 'X';
     }
 
-    randomBool() ? xStarts = true : xStarts = false;
-    xStarts ? cout << "X is starting" << endl : cout << "O is starting" << endl;
+    if (randomBool()) {
+        cout << "X is starting" << endl;
+        if (player1 == 'X') {
+            currentPlayer = 1;
+        } else {
+           currentPlayer = 2; 
+        }
+    } else {
+        cout << "O is starting" << endl;
+        if (player1 == 'O') {
+            currentPlayer = 1;
+        } else {
+           currentPlayer = 2; 
+        }
+    }
     /*cout << "End this? y/n" << endl;
     cin >> debugYN;
     debugYN == 'y' ? endGame = true : endGame = false;*/
 }
 
-
-//To do if invalid output is presented then output an error
-void player1_i() {
-    cout << "Where do you want to put the " << player1OX << endl;
-    cin >> g_input;
-    stringstream geek(g_input);
-    int i;
-    geek >> i;
-    tile[i - 1] = player1OX;
-    printTTT();
-}
-
-void player2_i() {
-    cout << "Where do you want to put the " << player2OX << endl;
-    cin >> g_input;
-    stringstream geek(g_input);
-    int i;
-    geek >> i;
-    tile[i - 1] = player2OX;
-    printTTT();
-}
 /*
 If:
 0,1,2
@@ -79,8 +74,7 @@ is all same char win
 void logicCheck(char a, char b, char c) {
     //cout << a << b << c << endl; //debug
     if((a == 'X' || b == 'O') && a == b && b == c) {
-        a == 'X' ? playerWon = 1 : playerWon = 2;
-        //cout << "someone won" << endl; //debug
+        playerWon = true;
         checking = false;
     }
 }
@@ -98,6 +92,48 @@ void winCheck() {
     if(checking){logicCheck(tile[2], tile[4], tile[6]);}
 }
 
+void player_i() {
+    while (true) {
+        do {
+            currentPlayer == 1 ? cout << "Where do you want to put the " << player1 << " (1-9)" << endl : cout << "Where do you want to put the " << player2 << " (1-9)" << endl;
+            cin >> g_input;
+            stringstream geek(g_input);
+            geek >> convertInt;
+            for (int i = 1; i < 9; i++) {
+                if(convertInt == i) {
+                    validIn = true;
+                    break;
+                } else {
+                    validIn = false;
+                }
+            }
+            if (!validIn) {
+                cout << "Invalid input" << endl;
+            }
+        } while(!validIn);
+        
+        if (currentPlayer == 1) {
+            tile[convertInt - 1] = player1;
+            winCheck();
+            printTTT();
+            if (playerWon) {
+                break;
+            } else {
+                currentPlayer = 2;
+            }
+        } else if (currentPlayer == 2) {
+            tile[convertInt - 1] = player2;
+            winCheck();
+            printTTT();
+            if (playerWon) {
+                break;
+            } else {
+                currentPlayer = 1;
+            }
+        }
+    }
+}
+
 int main()
 {
     cout << "Welcome to the game of TicTacToe\n";
@@ -105,21 +141,18 @@ int main()
         gameInit();
         while (true)
         {
-            player1_i();
-            winCheck();
-            if(playerWon == 1){
-                break;
-            }
-            player2_i();
-            winCheck();
-            if(playerWon == 2){
+            player_i();
+            if(playerWon == true){
                 break;
             }
         }
-        cout << "Player " << playerWon << " has won\n" << "Play again y/n" << endl;
+        cout << "Player " << currentPlayer << " has won\n" << "Play again y/n" << endl;
         cin >> g_input;
         if(g_input == "n"){
             break;
+        }
+        for (int i = 1; i < 9; i++) {
+            tile[i] = ' ';
         }
     }
     
