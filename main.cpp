@@ -134,6 +134,18 @@ void player_i() {
     }
 }
 
+void ai_easy() {
+    // random placment 
+}
+
+void ai_medium() {
+    // places where there are the most of it's own pieces
+}
+
+void ai_hard(){
+    //if it starts it plays offensively else it play defensively 
+}
+
 int main()
 {
     cout << "Welcome to the game of TicTacToe\n";
