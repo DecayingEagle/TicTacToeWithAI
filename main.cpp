@@ -5,10 +5,10 @@
 
 using namespace std;
 
-bool xStarts, endGame, checking, playerWon;
-string g_input;
-char player1, player2, player1win, player2win, debugYN, validIn;
-int currentPlayer, convertInt;
+bool checking, playerWon;
+string RA_input; //RA = random access
+char player1, player2, validIn;
+int currentPlayer;
 
 char tile[9] = {' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '};
 
@@ -19,7 +19,7 @@ bool randomBool()
 }
 
 
-void printTTT() {
+void printBoard() {
     cout << " " << tile[0] << " | " << tile[1] << " | " << tile[2] << endl;
     cout << "-----------\n";
     cout << " " << tile[3] << " | " << tile[4] << " | " << tile[5] << endl;
@@ -29,9 +29,9 @@ void printTTT() {
 
 void gameInit() {
     cout << "Do u want be X or O" << endl;
-    cin >> g_input ;
+    cin >> RA_input ;
 
-    if (g_input == "X" || g_input == "x") {
+    if (RA_input == "X" || RA_input == "x") {
         player1 = 'X';
         player2 = 'O';
     } else {
@@ -54,9 +54,14 @@ void gameInit() {
            currentPlayer = 2; 
         }
     }
-    /*cout << "End this? y/n" << endl;
-    cin >> debugYN;
-    debugYN == 'y' ? endGame = true : endGame = false;*/
+}
+
+void logicCheck(char a, char b, char c) {
+    //cout << a << b << c << endl; //debug
+    if((a == 'X' || b == 'O') && a == b && b == c) {
+        playerWon = true;
+        checking = false;
+    }
 }
 
 /*
@@ -71,14 +76,6 @@ If:
 2,4,6
 is all same char win
 */
-void logicCheck(char a, char b, char c) {
-    //cout << a << b << c << endl; //debug
-    if((a == 'X' || b == 'O') && a == b && b == c) {
-        playerWon = true;
-        checking = false;
-    }
-}
-
 void winCheck() {
     checking = true;
     playerWon = 0;
@@ -93,11 +90,13 @@ void winCheck() {
 }
 
 void player_i() {
+    int convertInt;
+
     while (true) {
         do {
             currentPlayer == 1 ? cout << "Where do you want to put the " << player1 << " (1-9)" << endl : cout << "Where do you want to put the " << player2 << " (1-9)" << endl;
-            cin >> g_input;
-            stringstream geek(g_input);
+            cin >> RA_input;
+            stringstream geek(RA_input);
             geek >> convertInt;
             for (int i = 1; i < 9; i++) {
                 if(convertInt == i) {
@@ -115,7 +114,7 @@ void player_i() {
         if (currentPlayer == 1) {
             tile[convertInt - 1] = player1;
             winCheck();
-            printTTT();
+            printBoard();
             if (playerWon) {
                 break;
             } else {
@@ -124,7 +123,7 @@ void player_i() {
         } else if (currentPlayer == 2) {
             tile[convertInt - 1] = player2;
             winCheck();
-            printTTT();
+            printBoard();
             if (playerWon) {
                 break;
             } else {
@@ -147,8 +146,8 @@ int main()
             }
         }
         cout << "Player " << currentPlayer << " has won\n" << "Play again y/n" << endl;
-        cin >> g_input;
-        if(g_input == "n"){
+        cin >> RA_input;
+        if(RA_input == "n"){
             break;
         }
         for (int i = 1; i < 9; i++) {
